@@ -8,6 +8,8 @@ const App = () => {
   const [cards, setCards] = useState([]);
   const [moves, setMoves] = useState(0);
   const [win, setWin] = useState(false);
+  const [lose, setLose] = useState(false);
+  const [playerName, setPlayerName] = useState('');
 
   useEffect(() => {
     axios.get('http://localhost:3000/api/game')
@@ -15,6 +17,7 @@ const App = () => {
         setCards(response.data.cards);
         setMoves(response.data.moves);
         setWin(response.data.win);
+        setLose(response.data.lose);
       })
       .catch(error => console.error('Error fetching game data:', error));
   }, []);
@@ -25,6 +28,7 @@ const App = () => {
         setCards(response.data.cards);
         setMoves(response.data.moves);
         setWin(response.data.win);
+        setLose(response.data.lose);
       })
       .catch(error => console.error('Error revealing card:', error));
   };
@@ -35,16 +39,37 @@ const App = () => {
         setCards(response.data.cards);
         setMoves(response.data.moves);
         setWin(false);
+        setLose(false);
       })
       .catch(error => console.error('Error resetting game:', error));
+  };
+
+  const handleNameChange = (e) => {
+    setPlayerName(e.target.value);
   };
 
   return (
     <div className="App">
       <h1>Memory Matching Game</h1>
-      <Scoreboard moves={moves} win={win} />
+      {!lose && (
+        <input
+          type="text"
+          placeholder="Enter your name"
+          value={playerName}
+          onChange={handleNameChange}
+        />
+      )}
+      <Scoreboard moves={moves} win={win} lose={lose} playerName={playerName} />
       {win ? (
-        <button onClick={handleReset}>Play Again</button>
+        <div>
+          <p>Congratulations {playerName}! You won!</p>
+          <button onClick={handleReset}>Play Again</button>
+        </div>
+      ) : lose ? (
+        <div>
+          <p className="message">Sorry {playerName}, you lost. Better luck next time!</p>
+          <button onClick={handleReset}>Play Again</button>
+        </div>
       ) : (
         <Board cards={cards} onCardClick={handleCardClick} />
       )}
