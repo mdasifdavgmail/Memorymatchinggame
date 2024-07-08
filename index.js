@@ -20,7 +20,7 @@ const generateCards = () => {
 let cards = generateCards();
 let moves = 0;
 let lastCardIndex = null;
-const maxMoves = 20;
+const maxMoves = 10;
 
 app.get('/api/game', (req, res) => {
   res.json({ cards, moves, win: false });
